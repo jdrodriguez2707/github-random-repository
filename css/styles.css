@@ -1,0 +1,74 @@
+body {
+  display: grid;
+  place-content: center;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 1.4rem;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 20px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.github-logo {
+  width: 40px;
+  height: 40px;
+}
+
+.title {
+  font-size: 2.2rem;
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+.select-programming-languages {
+  border-radius: 8px;
+  border: 2px solid black;
+  height: 38px;
+}
+
+.request-state {
+  padding: 36px;
+  border-radius: 8px;
+  background-color: #e9ecef;
+}
+
+.request-state-text {
+  text-align: center;
+}
+
+.retry-button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #ff0000;
+  cursor: pointer;
+}
+
+.inactive {
+  display: none;
+}
+
+.error-state {
+  background-color: #ff0000;
+}
+
+.refresh-background-color {
+  background-color: #000;
+}
