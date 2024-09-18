@@ -11,6 +11,7 @@ body {
   flex-direction: column;
   gap: 12px;
   padding: 0 20px;
+  max-width: 380px;
 }
 
 .header-container {
@@ -37,7 +38,7 @@ body {
 
 .select-programming-languages {
   border-radius: 8px;
-  border: 2px solid black;
+  border: 2px solid #000;
   height: 38px;
 }
 
@@ -67,6 +68,34 @@ body {
 
 .error-state {
   background-color: #ff0000;
+}
+
+.fulfilled-state {
+  background-color: transparent;
+  border: 2px solid #000;
+}
+
+.repository-name {
+  margin-bottom: 12px;
+}
+
+.repository-description {
+  margin-bottom: 16px;
+  color: #9e9e9e;
+}
+
+.repository-stats {
+  display: flex;
+  gap: 24px;
+}
+
+.stats-with-icon-container {
+  display: flex;
+  gap: 4px;
+}
+
+.stats-icon {
+  width: 14px;
 }
 
 .refresh-background-color {
