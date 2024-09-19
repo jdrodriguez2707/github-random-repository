@@ -66,19 +66,7 @@ body {
   display: none;
 }
 
-.error-state {
-  background-color: #ff00003b;
-}
-
-.button-error {
-  background-color: #ff0000;
-}
-
-.fulfilled-state {
-  background-color: transparent;
-  border: 2px solid #000;
-}
-
+/* Styles for the elements from JS */
 .repository-name {
   margin-bottom: 12px;
 }
@@ -102,6 +90,20 @@ body {
   width: 14px;
 }
 
+.error-state {
+  background-color: #ff00003b;
+}
+
+.button-error {
+  background-color: #ff0000;
+}
+
+.fulfilled-state {
+  background-color: transparent;
+  border: 2px solid #000;
+}
+
 .refresh-background-color {
   background-color: #000;
 }
+/* ------------------------------- */
