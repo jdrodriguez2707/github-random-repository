@@ -26,14 +26,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 const fetchRandomRepository = async (event) => {
-  console.log("Select changed!");
-  console.log(event.currentTarget.value);
-  const programmingLanguageSelected = event.currentTarget.value;
+  // console.log("Select changed!");
+  // console.log(event.currentTarget.value);
+  let programmingLanguageSelected = "";
 
   // Request states
   const requestStatesDiv = document.querySelector("#request-state");
-  const requestStateText = requestStatesDiv.firstElementChild;
+
+  if (requestStatesDiv.childElementCount > 1) {
+    const programmingLanguagesSelect = document.querySelector(
+      "#programming-languages"
+    );
+
+    programmingLanguageSelected = programmingLanguagesSelect.value;
+
+    while (requestStatesDiv.firstChild) {
+      requestStatesDiv.removeChild(requestStatesDiv.firstChild);
+    }
+  } else {
+    programmingLanguageSelected = event.currentTarget.value;
+    requestStatesDiv.removeChild(requestStatesDiv.firstElementChild);
+  }
+
+  const requestStateText = document.createElement("p");
   requestStateText.textContent = "Loading, please wait...";
+  requestStateText.classList.add("request-state-text");
+  requestStatesDiv.appendChild(requestStateText);
 
   try {
     const query = programmingLanguageSelected
@@ -59,6 +77,7 @@ const fetchRandomRepository = async (event) => {
 
     displayRandomRepository(
       requestStatesDiv,
+      requestStateText,
       repositoryName,
       repositoryDescription,
       repositoryLanguage,
@@ -66,6 +85,8 @@ const fetchRandomRepository = async (event) => {
       repositoryForks,
       repositoryOpenIssues
     );
+
+    displayRefreshButton();
   } catch (error) {
     console.log(error);
   }
@@ -77,6 +98,7 @@ function getRandomIndex(arrayLength) {
 
 function displayRandomRepository(
   requestStatesDiv,
+  requestStateText,
   name,
   description,
   language,
@@ -86,7 +108,7 @@ function displayRandomRepository(
 ) {
   // Request states container
   requestStatesDiv.classList.add("fulfilled-state");
-  requestStatesDiv.removeChild(requestStatesDiv.firstElementChild);
+  requestStatesDiv.removeChild(requestStateText);
 
   // Repository name h2
   const repositoryName = document.createElement("h2");
@@ -153,4 +175,22 @@ function displayRandomRepository(
     repositoryDescription,
     repositoryStatsContainer
   );
+}
+
+function displayRefreshButton() {
+  const refreshButton = document.querySelector("#retry-button");
+  refreshButton.classList.remove("inactive");
+  refreshButton.classList.add("refresh-background-color");
+  refreshButton.textContent = "Refresh";
+
+  const repositoryFinderForm = document.querySelector(
+    "#repository-finder-form"
+  );
+  repositoryFinderForm.removeEventListener("submit", handleFormSubmit);
+  repositoryFinderForm.addEventListener("submit", handleFormSubmit);
+}
+
+function handleFormSubmit(event) {
+  event.preventDefault();
+  fetchRandomRepository();
 }
