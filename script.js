@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       "https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json"
     );
     const programmingLanguages = await response.json();
-    console.log(programmingLanguages);
+    // console.log(programmingLanguages);
 
     programmingLanguages.forEach((programmingLanguage) => {
       const option = document.createElement("option");
@@ -30,9 +30,10 @@ const fetchRandomRepository = async (event) => {
   // console.log(event.currentTarget.value);
   let programmingLanguageSelected = "";
 
-  // Request states
+  // Request states container
   const requestStatesDiv = document.querySelector("#request-state");
 
+  // Remove previous repository data from the DOM if it exists (when the user clicked the refresh button)
   if (requestStatesDiv.childElementCount > 1) {
     const programmingLanguagesSelect = document.querySelector(
       "#programming-languages"
@@ -45,12 +46,15 @@ const fetchRandomRepository = async (event) => {
     }
   } else {
     programmingLanguageSelected = event.currentTarget.value;
+    // Remove the loading text
     requestStatesDiv.removeChild(requestStatesDiv.firstElementChild);
   }
 
+  // Add the loading text
   const requestStateText = document.createElement("p");
   requestStateText.textContent = "Loading, please wait...";
   requestStateText.classList.add("request-state-text");
+  requestStatesDiv.classList.remove("error-state");
   requestStatesDiv.appendChild(requestStateText);
 
   try {
@@ -71,9 +75,9 @@ const fetchRandomRepository = async (event) => {
     const repositoryForks = repositories[randomIndex].forks;
     const repositoryOpenIssues = repositories[randomIndex].open_issues_count;
 
-    console.log(
-      `Name: ${repositoryName}\nDesc: ${repositoryDescription}\nLang: ${repositoryLanguage}\nStars: ${repositoryStars}\nForks: ${repositoryForks}\nIssues: ${repositoryOpenIssues}`
-    );
+    // console.log(
+    //   `Name: ${repositoryName}\nDesc: ${repositoryDescription}\nLang: ${repositoryLanguage}\nStars: ${repositoryStars}\nForks: ${repositoryForks}\nIssues: ${repositoryOpenIssues}`
+    // );
 
     displayRandomRepository(
       requestStatesDiv,
@@ -88,7 +92,8 @@ const fetchRandomRepository = async (event) => {
 
     displayRefreshButton();
   } catch (error) {
-    console.log(error);
+    // console.log(error);
+    displayErrorState(requestStatesDiv, requestStateText);
   }
 };
 
@@ -107,6 +112,7 @@ function displayRandomRepository(
   openIssues
 ) {
   // Request states container
+  requestStatesDiv.classList.remove("error-state");
   requestStatesDiv.classList.add("fulfilled-state");
   requestStatesDiv.removeChild(requestStateText);
 
@@ -177,11 +183,19 @@ function displayRandomRepository(
   );
 }
 
-function displayRefreshButton() {
+function displayRefreshButton(errorState) {
   const refreshButton = document.querySelector("#retry-button");
   refreshButton.classList.remove("inactive");
-  refreshButton.classList.add("refresh-background-color");
-  refreshButton.textContent = "Refresh";
+
+  if (errorState) {
+    refreshButton.classList.remove("refresh-background-color");
+    refreshButton.classList.add("button-error");
+    refreshButton.textContent = "Click to retry";
+  } else {
+    refreshButton.classList.remove("button-error");
+    refreshButton.classList.add("refresh-background-color");
+    refreshButton.textContent = "Refresh";
+  }
 
   const repositoryFinderForm = document.querySelector(
     "#repository-finder-form"
@@ -193,4 +207,13 @@ function displayRefreshButton() {
 function handleFormSubmit(event) {
   event.preventDefault();
   fetchRandomRepository();
+}
+
+function displayErrorState(requestStatesDiv, requestStateText) {
+  requestStatesDiv.classList.remove("fulfilled-state");
+  requestStatesDiv.classList.add("error-state");
+  requestStateText.textContent = "Error fetching repositories";
+  const errorState = true;
+
+  displayRefreshButton(errorState);
 }

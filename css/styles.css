@@ -67,6 +67,10 @@ body {
 }
 
 .error-state {
+  background-color: #ff00003b;
+}
+
+.button-error {
   background-color: #ff0000;
 }
 
