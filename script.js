@@ -22,13 +22,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.log(error);
   }
 
-  programmingLanguagesSelect.addEventListener(
-    "change",
-    onProgrammingLanguageChange
-  );
+  programmingLanguagesSelect.addEventListener("change", fetchRandomRepository);
 });
 
-const onProgrammingLanguageChange = async (event) => {
+const fetchRandomRepository = async (event) => {
   console.log("Select changed!");
   console.log(event.currentTarget.value);
   const programmingLanguageSelected = event.currentTarget.value;
@@ -39,30 +36,22 @@ const onProgrammingLanguageChange = async (event) => {
   requestStateText.textContent = "Loading, please wait...";
 
   try {
+    const query = programmingLanguageSelected
+      ? `language:${programmingLanguageSelected}`
+      : "stars:>1";
     const response = await fetch(
-      `https://api.github.com/search/repositories?q=language:${programmingLanguageSelected}&sort=stars&order=desc`
+      `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc`
     );
-    const repositories = await response.json();
+    const data = await response.json();
+    const repositories = data.items;
+    const randomIndex = getRandomIndex(repositories.length);
 
-    const repositoryName =
-      repositories.items[getRandomIndex(repositories.items.length)].name;
-
-    const repositoryDescription =
-      repositories.items[getRandomIndex(repositories.items.length)].description;
-
-    const repositoryLanguage =
-      repositories.items[getRandomIndex(repositories.items.length)].language;
-
-    const repositoryStars =
-      repositories.items[getRandomIndex(repositories.items.length)]
-        .stargazers_count;
-
-    const repositoryForks =
-      repositories.items[getRandomIndex(repositories.items.length)].forks;
-
-    const repositoryOpenIssues =
-      repositories.items[getRandomIndex(repositories.items.length)]
-        .open_issues_count;
+    const repositoryName = repositories[randomIndex].name;
+    const repositoryDescription = repositories[randomIndex].description;
+    const repositoryLanguage = repositories[randomIndex].language;
+    const repositoryStars = repositories[randomIndex].stargazers_count;
+    const repositoryForks = repositories[randomIndex].forks;
+    const repositoryOpenIssues = repositories[randomIndex].open_issues_count;
 
     console.log(
       `Name: ${repositoryName}\nDesc: ${repositoryDescription}\nLang: ${repositoryLanguage}\nStars: ${repositoryStars}\nForks: ${repositoryForks}\nIssues: ${repositoryOpenIssues}`
