@@ -157,6 +157,7 @@ function displayRandomRepository(
   repositoryAnchor.classList.add("repository-url");
   repositoryAnchor.href = URL;
   repositoryAnchor.target = "_blank";
+  repositoryAnchor.rel = "noopener noreferrer";
 
   // Repository name h2
   const repositoryName = document.createElement("h2");
