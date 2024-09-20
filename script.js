@@ -1,33 +1,42 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  // Programming languages select
+  const programmingLanguages = await fetchProgrammingLanguages();
   const programmingLanguagesSelect = document.querySelector(
     "#programming-languages"
   );
+  populateProgrammingLanguagesSelect(
+    programmingLanguagesSelect,
+    programmingLanguages
+  );
+  programmingLanguagesSelect.addEventListener("change", handleRequestStates);
+});
 
+async function fetchProgrammingLanguages() {
   try {
     const response = await fetch(
       "https://raw.githubusercontent.com/kamranahmedse/githunt/master/src/components/filters/language-filter/languages.json"
     );
     const programmingLanguages = await response.json();
     // console.log(programmingLanguages);
-
-    programmingLanguages.forEach((programmingLanguage) => {
-      const option = document.createElement("option");
-      option.value = programmingLanguage.value;
-      option.textContent = programmingLanguage.title;
-
-      programmingLanguagesSelect.appendChild(option);
-    });
+    return programmingLanguages;
   } catch (error) {
-    console.log(error);
+    console.log(`Error fetching programming languages: ${error}`);
   }
+}
 
-  programmingLanguagesSelect.addEventListener("change", fetchRandomRepository);
-});
+function populateProgrammingLanguagesSelect(
+  programmingLanguagesSelect,
+  programmingLanguages
+) {
+  programmingLanguages.forEach((programmingLanguage) => {
+    const option = document.createElement("option");
+    option.value = programmingLanguage.value;
+    option.textContent = programmingLanguage.title;
 
-const fetchRandomRepository = async (event) => {
-  // console.log("Select changed!");
-  // console.log(event.currentTarget.value);
+    programmingLanguagesSelect.appendChild(option);
+  });
+}
+
+const handleRequestStates = async (event) => {
   const programmingLanguagesSelect = document.querySelector(
     "#programming-languages"
   );
@@ -37,36 +46,55 @@ const fetchRandomRepository = async (event) => {
   // Request states container
   const requestStatesDiv = document.querySelector("#request-state");
 
+  // Fulfilled state (repository data already displayed)
+  const fulFilledState = requestStatesDiv.childElementCount > 1;
+
   // Remove previous repository data from the DOM if it exists (when the user clicked the refresh button)
-  if (requestStatesDiv.childElementCount > 1) {
+  if (fulFilledState) {
+    // Remove the previous repository data
     while (requestStatesDiv.firstChild) {
       requestStatesDiv.removeChild(requestStatesDiv.firstChild);
     }
-
+    // Get the selected programming language value when the user clicks the refresh button
     programmingLanguageSelected = programmingLanguagesSelect.value;
   } else {
-    // Remove "Select a language" option the first time the user selects a language
+    // Remove "Select a language" option the first time the user selects a language to avoid the user selecting it again
     programmingLanguagesSelect.removeChild(
       programmingLanguagesSelect.firstElementChild
     );
+    // Get the selected programming language value when the user changes the select value
     programmingLanguageSelected = event.currentTarget.value;
-    // Remove the loading text
+    // Remove the initial text when the user selects a programming language
     requestStatesDiv.removeChild(requestStatesDiv.firstElementChild);
   }
 
-  // Add the loading text
+  // Add the loading state
   const requestStateText = document.createElement("p");
   requestStateText.textContent = "Loading, please wait...";
   requestStateText.classList.add("request-state-text");
   requestStatesDiv.classList.remove("error-state");
   requestStatesDiv.classList.remove("fulfilled-state");
-  requestStatesDiv.classList.add("request-state");
+  requestStatesDiv.classList.add("loading-state");
   requestStatesDiv.appendChild(requestStateText);
 
+  // The requestStatesDiv and the requestStateText are passed as arguments to display the repository data when the fetch is successful
+  fetchRandomRepository(
+    programmingLanguageSelected,
+    requestStatesDiv,
+    requestStateText
+  );
+};
+
+async function fetchRandomRepository(
+  programmingLanguageSelected,
+  requestStatesDiv,
+  requestStateText
+) {
   try {
+    // Fetch the repositories from the GitHub API
     const query = programmingLanguageSelected
       ? `language:${programmingLanguageSelected}`
-      : "stars:>1";
+      : "stars:>1"; // Default query if the user doesn't select a programming language (get the most starred repositories in any language)
     const response = await fetch(
       `https://api.github.com/search/repositories?q=${query}&sort=stars&order=desc`
     );
@@ -98,14 +126,12 @@ const fetchRandomRepository = async (event) => {
 
     displayRefreshButton();
   } catch (error) {
-    // console.log(error);
+    console.log(`Error fetching repositories: ${error}`);
     displayErrorState(requestStatesDiv, requestStateText);
   }
-};
-
-function getRandomIndex(arrayLength) {
-  return Math.floor(Math.random() * arrayLength);
 }
+
+const getRandomIndex = (arrayLength) => Math.floor(Math.random() * arrayLength);
 
 function displayRandomRepository(
   requestStatesDiv,
@@ -117,7 +143,7 @@ function displayRandomRepository(
   forks,
   openIssues
 ) {
-  // Request states container
+  // Remove error state and add the fulfilled state
   requestStatesDiv.classList.remove("error-state");
   requestStatesDiv.classList.add("fulfilled-state");
   requestStatesDiv.removeChild(requestStateText);
@@ -193,6 +219,7 @@ function displayRefreshButton(errorState) {
   const refreshButton = document.querySelector("#retry-button");
   refreshButton.classList.remove("inactive");
 
+  // If there's an error fetching the repositories, display the retry button with the error state. Otherwise, display the refresh button with the fulfilled state
   if (errorState) {
     refreshButton.classList.remove("refresh-background-color");
     refreshButton.classList.add("button-error");
@@ -206,19 +233,22 @@ function displayRefreshButton(errorState) {
   const repositoryFinderForm = document.querySelector(
     "#repository-finder-form"
   );
+  // Remove the previous event listener to avoid multiple event listeners
   repositoryFinderForm.removeEventListener("submit", handleFormSubmit);
   repositoryFinderForm.addEventListener("submit", handleFormSubmit);
 }
 
 function handleFormSubmit(event) {
   event.preventDefault();
-  fetchRandomRepository();
+  // Fetch the repositories again when the user clicks the refresh or retry button
+  handleRequestStates();
 }
 
 function displayErrorState(requestStatesDiv, requestStateText) {
   requestStatesDiv.classList.remove("fulfilled-state");
   requestStatesDiv.classList.add("error-state");
   requestStateText.textContent = "Error fetching repositories";
+  // Flag to display the retry button with the error state
   const errorState = true;
 
   displayRefreshButton(errorState);
