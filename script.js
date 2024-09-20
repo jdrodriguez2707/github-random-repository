@@ -100,8 +100,10 @@ async function fetchRandomRepository(
     );
     const data = await response.json();
     const repositories = data.items;
+
     const randomIndex = getRandomIndex(repositories.length);
 
+    const repositoryURL = repositories[randomIndex].html_url;
     const repositoryName = repositories[randomIndex].name;
     const repositoryDescription = repositories[randomIndex].description;
     const repositoryLanguage = repositories[randomIndex].language;
@@ -116,6 +118,7 @@ async function fetchRandomRepository(
     displayRandomRepository(
       requestStatesDiv,
       requestStateText,
+      repositoryURL,
       repositoryName,
       repositoryDescription,
       repositoryLanguage,
@@ -136,6 +139,7 @@ const getRandomIndex = (arrayLength) => Math.floor(Math.random() * arrayLength);
 function displayRandomRepository(
   requestStatesDiv,
   requestStateText,
+  URL,
   name,
   description,
   language,
@@ -148,10 +152,18 @@ function displayRandomRepository(
   requestStatesDiv.classList.add("fulfilled-state");
   requestStatesDiv.removeChild(requestStateText);
 
+  // Repository anchor
+  const repositoryAnchor = document.createElement("a");
+  repositoryAnchor.classList.add("repository-url");
+  repositoryAnchor.href = URL;
+  repositoryAnchor.target = "_blank";
+
   // Repository name h2
   const repositoryName = document.createElement("h2");
   repositoryName.classList.add("repository-name");
   repositoryName.textContent = name;
+
+  repositoryAnchor.appendChild(repositoryName);
 
   // Repository description paragraph
   const repositoryDescription = document.createElement("p");
@@ -209,7 +221,7 @@ function displayRandomRepository(
   );
 
   requestStatesDiv.append(
-    repositoryName,
+    repositoryAnchor,
     repositoryDescription,
     repositoryStatsContainer
   );
