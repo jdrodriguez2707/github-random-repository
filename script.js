@@ -28,6 +28,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 const fetchRandomRepository = async (event) => {
   // console.log("Select changed!");
   // console.log(event.currentTarget.value);
+  const programmingLanguagesSelect = document.querySelector(
+    "#programming-languages"
+  );
+
   let programmingLanguageSelected = "";
 
   // Request states container
@@ -35,16 +39,16 @@ const fetchRandomRepository = async (event) => {
 
   // Remove previous repository data from the DOM if it exists (when the user clicked the refresh button)
   if (requestStatesDiv.childElementCount > 1) {
-    const programmingLanguagesSelect = document.querySelector(
-      "#programming-languages"
-    );
-
-    programmingLanguageSelected = programmingLanguagesSelect.value;
-
     while (requestStatesDiv.firstChild) {
       requestStatesDiv.removeChild(requestStatesDiv.firstChild);
     }
+
+    programmingLanguageSelected = programmingLanguagesSelect.value;
   } else {
+    // Remove "Select a language" option the first time the user selects a language
+    programmingLanguagesSelect.removeChild(
+      programmingLanguagesSelect.firstElementChild
+    );
     programmingLanguageSelected = event.currentTarget.value;
     // Remove the loading text
     requestStatesDiv.removeChild(requestStatesDiv.firstElementChild);
@@ -55,6 +59,8 @@ const fetchRandomRepository = async (event) => {
   requestStateText.textContent = "Loading, please wait...";
   requestStateText.classList.add("request-state-text");
   requestStatesDiv.classList.remove("error-state");
+  requestStatesDiv.classList.remove("fulfilled-state");
+  requestStatesDiv.classList.add("request-state");
   requestStatesDiv.appendChild(requestStateText);
 
   try {
