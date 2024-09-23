@@ -107,6 +107,8 @@ body {
 .repository-description {
   margin-bottom: 16px;
   color: #586069;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .repository-stats {

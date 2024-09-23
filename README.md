@@ -1,6 +1,6 @@
 # GitHub Random Repository Finder
 
-GitHub repository finder in JavaScript that allows users to select a programming language and get a random repository according to that language.
+This is a [challenge](https://roadmap.sh/projects/github-random-repo) from [roadmap.sh](https://roadmap.sh/). The challenge is to build a GitHub random repository finder using the GitHub API that allows users to select a programming language and get a random repository according to that language.
 
 ## Description
 
@@ -22,7 +22,7 @@ GitHub repository finder in JavaScript that allows users to select a programming
 
 ### Links
 
-- Live Site URL: [Click here](https://jdrodriguez2707.github.io/github-random-repository/)
+- Live Site URL: [Click here](https://jdrodriguez2707.github.io/github-random-repository-finder/)
 
 ## My process
 
