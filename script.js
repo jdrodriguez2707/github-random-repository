@@ -1,3 +1,5 @@
+"use strict";
+
 document.addEventListener("DOMContentLoaded", async () => {
   const programmingLanguages = await fetchProgrammingLanguages();
   const programmingLanguagesSelect = document.querySelector(
